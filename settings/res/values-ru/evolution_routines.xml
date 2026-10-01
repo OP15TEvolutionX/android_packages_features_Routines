@@ -42,11 +42,6 @@
     <string name="routines_ssid_hint">Название сети Wi-Fi (необязательно)</string>
     <string name="routines_device_hint">Адрес устройства (необязательно)</string>
     <string name="routines_broadcast_hint">Действие Intent (например, android.intent.action.MAIN)</string>
-    <string name="routines_intent_mode_broadcast">Рассылка</string>
-    <string name="routines_intent_mode_service">Служба</string>
-    <string name="routines_intent_mode_fg_service">Служба переднего плана</string>
-    <string name="routines_intent_component_package">Пакет компонента (необязательно)</string>
-    <string name="routines_intent_component_class">Класс компонента (необязательно)</string>
     <string name="routines_intent_extras_label">Дополнительные параметры</string>
     <string name="routines_intent_extras_add">Добавить параметр</string>
     <string name="routines_intent_extras_key">Ключ</string>
@@ -87,7 +82,6 @@
     <string name="routines_launch_app">Запустить приложение</string>
     <string name="routines_launch_app_freeform">Запустить приложение в свободном окне</string>
     <string name="routines_launch_app_bubble">Запустить приложение в пузырьке</string>
-    <string name="routines_send_broadcast">Отправить рассылку</string>
     <string name="routines_show_notification">Показать уведомление</string>
     <string name="routines_delay">Задержка</string>
     <string name="routines_set_setting">Изменить настройку</string>
@@ -234,7 +228,6 @@
     <string name="routines_summary_open_freeform">Открыть %1$s (свободное окно)</string>
     <string name="routines_summary_open_bubble">Открыть %1$s (пузырёк)</string>
     <string name="routines_summary_open_40">Открыть %1$s</string>
-    <string name="routines_summary_broadcast">Рассылка</string>
     <string name="routines_summary_notify">Уведомление: %1$s</string>
     <string name="routines_summary_wait_s">Подождать %1$s с</string>
     <string name="routines_summary_set">Изменить %1$s</string>
