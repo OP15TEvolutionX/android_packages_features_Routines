@@ -69,6 +69,10 @@ interactor.init(). Toast о запуске routine отключён. Явные 
   тема Activity выбирается через тот же SettingsThemeHelper, что и в Settings;
   edge-to-edge, возврат непосредственно к вызывающему экрану.
 - Отдельный значок автоматизации в меню Evolver.
+- Фон и карточки используют те же ресурсы цвета, что XML-страницы Settings;
+  заголовок группы расположен над карточками, кнопка назад круглая,
+  переключатели показывают отметку состояния. Системные панели прозрачны
+  поверх общего фона экрана.
 - Выполнение без автоматического toast и значка статусной строки.
 - Собственный небольшой RoutinesModule для запуска движка через Dagger;
   регистрация QS-плитки отключена.
@@ -83,6 +87,10 @@ source build/envsetup.sh
 lunch evolution_fairlady-userdebug
 m evolution
 ```
+
+Для сборки только интерфейса в конфигурации fairlady используйте
+`m SettingsGoogle`; для движка — `m SystemUIGoogle`. Обновление SystemUIGoogle
+не меняет интерфейс или значок пункта Evolver: они находятся в SettingsGoogle.
 
 После изменений Dagger проверяйте в сгенерированном Google-компоненте наличие
 `RoutinesManager.class` в карте CoreStartable. QS-плитка Routines отключена:

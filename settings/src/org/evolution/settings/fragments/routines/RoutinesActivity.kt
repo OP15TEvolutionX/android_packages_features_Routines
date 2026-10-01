@@ -9,7 +9,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.android.settings.R
-import com.android.settingslib.spa.framework.theme.SettingsTheme
 import com.android.settingslib.widget.SettingsThemeHelper
 
 /** Full-screen Settings entry point; avoids the SubSettings fragment container. */
@@ -24,8 +23,10 @@ class RoutinesActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        window.isStatusBarContrastEnforced = false
+        window.isNavigationBarContrastEnforced = false
         setContent {
-            SettingsTheme {
+            RoutinesTheme {
                 RoutinesScreen(onBackClick = ::finish)
             }
         }

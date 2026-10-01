@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 Evolution X; SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <!-- Resolve against the final Settings resources, including Google overlays. -->
+    <color name="evolution_routines_background">@color/settingslib_materialColorSurfaceContainer</color>
+    <color name="evolution_routines_preference_background">@color/materialColorSurfaceContainer</color>
+</resources>

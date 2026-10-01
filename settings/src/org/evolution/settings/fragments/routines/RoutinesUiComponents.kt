@@ -11,20 +11,29 @@ import android.os.UserHandle
 import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.android.settingslib.spa.framework.theme.SettingsShape
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -44,12 +54,30 @@ internal fun RoutinesScaffold(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                ),
                 title = { Text(title) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                    FilledIconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.size(48.dp),
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        ),
+                    ) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = androidx.compose.ui.res.stringResource(
+                                androidx.appcompat.R.string.abc_action_bar_up_description,
+                            ),
+                        )
                     }
                 },
             )
@@ -65,7 +93,19 @@ internal fun RoutineSwitch(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Switch(checked = checked, onCheckedChange = onCheckedChange, modifier = modifier, enabled = enabled)
+    Switch(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        modifier = modifier,
+        enabled = enabled,
+        thumbContent = {
+            Icon(
+                if (checked) Icons.Default.Check else Icons.Default.Close,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+            )
+        },
+    )
 }
 
 internal class PreferenceGroupScope {
@@ -78,16 +118,26 @@ internal fun PreferenceGroup(
     title: String? = null,
     content: @Composable PreferenceGroupScope.() -> Unit,
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            title?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        title?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 12.dp),
+            )
+        }
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = SettingsShape.CornerExtraLarge1,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                PreferenceGroupScope().content()
             }
-            PreferenceGroupScope().content()
         }
     }
 }
@@ -101,6 +151,7 @@ internal fun ClickablePreference(
     onClick: () -> Unit,
 ) {
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         headlineContent = { Text(title) },
         supportingContent = { Text(summary) },
         leadingContent = { Icon(icon, contentDescription = null) },
@@ -134,11 +185,12 @@ internal fun SecureSettingSwitch(
         onDispose { context.contentResolver.unregisterContentObserver(observer) }
     }
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         headlineContent = { Text(title) },
         supportingContent = { Text(summary) },
         leadingContent = { Icon(icon, contentDescription = null) },
         trailingContent = {
-            Switch(
+            RoutineSwitch(
                 checked = checked,
                 onCheckedChange = { enabled ->
                     Settings.Secure.putIntForUser(
