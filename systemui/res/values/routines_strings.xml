@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="routines_notification_channel_name">Routines</string>
+    <string name="routines_toast_executing">Running routine: <xliff:g id="name">%1$s</xliff:g></string>
+    <string name="routines_sms_location_reply">Current location: <xliff:g id="location">%1$s</xliff:g></string>
+    <string name="routines_sms_location_unavailable">Current location unavailable</string>
+    <string name="status_bar_routines">Routines active</string>
+    <string name="quick_settings_routines_label">Routines</string>
+    <string name="quick_settings_routines_off">Off</string>
+    <string name="quick_settings_routines_dialog_title">Run a routine</string>
+    <string name="quick_settings_routines_empty">Create routines in Evolution settings.</string>
+    <string name="quick_settings_routines_action_count">%1$d actions</string>
+    <plurals name="quick_settings_routines_count">
+        <item quantity="one"><xliff:g id="count">%d</xliff:g> routine</item>
+        <item quantity="other"><xliff:g id="count">%d</xliff:g> routines</item>
+    </plurals>
+</resources>

@@ -1,0 +1,15 @@
+// Copyright (C) 2026 Evolution X
+// SPDX-License-Identifier: Apache-2.0
+
+// Compile in the host modules: the engine uses internal SystemUI APIs and Dagger.
+filegroup {
+    name: "evolution-routines-systemui-srcs",
+    srcs: ["systemui/src/**/*.kt"],
+    visibility: ["//frameworks/base/packages/SystemUI:__pkg__"],
+}
+
+filegroup {
+    name: "evolution-routines-settings-srcs",
+    srcs: ["settings/src/**/*.kt"],
+    visibility: ["//packages/apps/Settings:__pkg__"],
+}
