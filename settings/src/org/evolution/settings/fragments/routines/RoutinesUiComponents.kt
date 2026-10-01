@@ -100,6 +100,7 @@ internal class PreferenceGroupScope {
 @Composable
 internal fun PreferenceGroup(
     title: String? = null,
+    compactTitle: Boolean = false,
     content: @Composable PreferenceGroupScope.() -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -107,7 +108,8 @@ internal fun PreferenceGroup(
             Text(
                 text = it,
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleMedium,
+                style = if (compactTitle) MaterialTheme.typography.labelLarge
+                    else MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
             )
         }

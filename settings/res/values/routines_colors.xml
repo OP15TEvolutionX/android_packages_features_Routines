@@ -3,5 +3,5 @@
 <resources>
     <!-- Resolve against the final Settings resources, including Google overlays. -->
     <color name="evolution_routines_background">@color/settingslib_materialColorSurfaceContainer</color>
-    <color name="evolution_routines_preference_background">@color/materialColorSurfaceContainer</color>
+    <color name="evolution_routines_preference_background">@android:color/system_surface_container_high_light</color>
 </resources>

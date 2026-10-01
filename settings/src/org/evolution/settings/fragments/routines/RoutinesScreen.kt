@@ -311,7 +311,10 @@ private fun RoutinesListContent(
 
         Spacer(Modifier.height(16.dp))
 
-        PreferenceGroup(title = stringResource(R.string.routines_backup_restore)) {
+        PreferenceGroup(
+            title = stringResource(R.string.routines_backup_restore),
+            compactTitle = true,
+        ) {
             item {
                 ClickablePreference(
                     title = stringResource(R.string.routines_export),
