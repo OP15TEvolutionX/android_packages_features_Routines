@@ -9,7 +9,7 @@ com.android.settings. Этот репозиторий не является от
 - `systemui/src/`: модели, хранилище, движок, триггеры, Actions и QS-плитка.
 - `systemui/res/`: строки и значок QS-плитки.
 - `settings/src/`: интерфейс, редактор, импорт/экспорт и Settings Activity.
-- `settings/res/`: строки интерфейса и значок пункта Evolver.
+- `settings/res/`: строки интерфейса и значок пункта главных настроек.
 - `Android.bp`: два Soong filegroup для сборки в модулях-хозяевах.
 - [UPSTREAM.md](UPSTREAM.md): где проверять изменения Axion.
 
@@ -36,10 +36,11 @@ Manifest: проект `android_packages_features_Routines`, ветка `cnb`, �
    Регистрация должна попасть в фактический компонент SystemUIGoogle.
 4. `Settings/AndroidManifest.xml` регистрирует
    `org.evolution.settings.fragments.routines.RoutinesActivity`,
-   `exported=false`, с темой `Theme.Settings.NoActionBar`.
-5. Пункт `routines` в `Evolver/res/xml/evolution_settings.xml` использует
-   `@drawable/ic_routines` и explicit intent на эту Activity в
-   `com.android.settings`. Он не открывает SubSettings-фрагмент.
+   `exported=false`, с темой `Theme.SubSettings`.
+5. Пункт `top_level_routines` в трёх вариантах `Settings/res/xml/top_level_settings*.xml`
+   стоит первым в `top_level_personalize_category`, перед приложениями,
+   использует `@drawable/ic_homepage_routines` и explicit intent на эту Activity
+   в `com.android.settings`. Пункт в Evolver удалён.
 
 ## Системные зависимости
 
@@ -68,7 +69,10 @@ interactor.init(). Toast о запуске routine отключён. Явные 
 - Отдельная полноэкранная Activity: системные динамические цвета SettingsTheme,
   тема Activity выбирается через тот же SettingsThemeHelper, что и в Settings;
   edge-to-edge, возврат непосредственно к вызывающему экрану.
-- Отдельный значок автоматизации в меню Evolver.
+- Штатный сворачиваемый AppBar из CollapsingToolbarBaseActivity, как у страницы
+  приложений. Compose содержит только содержимое экрана; вложенная прокрутка
+  связана с CoordinatorLayout. Кнопка назад использует диспетчер возврата.
+- Отдельный значок автоматизации в главных настройках.
 - Фон и карточки используют те же ресурсы цвета, что XML-страницы Settings;
   заголовок группы расположен над карточками, кнопка назад круглая,
   переключатели показывают отметку состояния. Системные панели прозрачны
@@ -90,13 +94,13 @@ m evolution
 
 Для сборки только интерфейса в конфигурации fairlady используйте
 `m SettingsGoogle`; для движка — `m SystemUIGoogle`. Обновление SystemUIGoogle
-не меняет интерфейс или значок пункта Evolver: они находятся в SettingsGoogle.
+не меняет интерфейс или значок пункта настроек: они находятся в SettingsGoogle.
 
 После изменений Dagger проверяйте в сгенерированном Google-компоненте наличие
 `RoutinesManager.class` в карте CoreStartable. QS-плитка Routines отключена:
 её регистрация и запись в stock tiles удалены. Исходники плитки сохранены
 для сравнения с Axion, но она не должна присутствовать в карте QS-плиток.
-На устройстве проверьте открытие из Evolver, светлую/тёмную тему, редактор,
+На устройстве проверьте открытие из главных настроек, светлую/тёмную тему, редактор,
 возврат назад и реальные триггеры. Успешная сборка не заменяет эту проверку.
 
 ## Лицензия
