@@ -17,14 +17,11 @@
 package com.android.systemui.routines.dagger
 
 import com.android.systemui.CoreStartable
-import com.android.systemui.qs.tileimpl.QSTileImpl
 import com.android.systemui.routines.ui.RoutinesManager
-import com.android.systemui.routines.ui.qs.RoutinesTile
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
-import dagger.multibindings.StringKey
 
 @Module
 abstract class RoutinesModule {
@@ -33,8 +30,4 @@ abstract class RoutinesModule {
     @ClassKey(RoutinesManager::class)
     abstract fun bindRoutinesManager(impl: RoutinesManager): CoreStartable
 
-    @Binds
-    @IntoMap
-    @StringKey(RoutinesTile.TILE_SPEC)
-    abstract fun bindRoutinesTile(impl: RoutinesTile): QSTileImpl<*>
 }
