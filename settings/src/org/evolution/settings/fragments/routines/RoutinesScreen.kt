@@ -28,10 +28,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -39,7 +35,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,7 +74,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -111,9 +105,11 @@ fun RoutinesScreen(onBackClick: () -> Unit) {
     val scope = rememberCoroutineScope()
     val serializer = remember { RoutineSerializer() }
     var routines by remember { mutableStateOf<List<Routine>>(emptyList()) }
+    var routinesLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(context, serializer) {
         routines = loadRoutines(context, serializer)
+        routinesLoaded = true
     }
 
     fun save(updated: List<Routine>) {
@@ -204,6 +200,8 @@ fun RoutinesScreen(onBackClick: () -> Unit) {
     }
 
     RoutinesScaffold(title = screenTitle, onBackClick = handleBack) { innerPadding ->
+        // Do not present an empty state while the saved routines are still loading.
+        if (!routinesLoaded) return@RoutinesScaffold
         AnimatedContent(
             targetState = currentView,
             transitionSpec = {
@@ -307,6 +305,7 @@ private fun RoutinesListContent(
                     summary = stringResource(R.string.routines_enabled_summary),
                     icon = Icons.Default.AutoMode,
                     defaultValue = false,
+                    mainSwitch = true,
                 )
             }
         }
@@ -339,7 +338,7 @@ private fun RoutinesListContent(
 
         Spacer(Modifier.height(16.dp))
 
-        AnimatedVisibility(visible = routines.isEmpty()) {
+        if (routines.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -368,17 +367,20 @@ private fun RoutinesListContent(
             }
         }
 
-        AnimatedVisibility(visible = routines.isNotEmpty()) {
-            Column {
+        if (routines.isNotEmpty()) {
+            PreferenceGroup(title = stringResource(R.string.routines_saved)) {
                 routines.forEach { routine ->
-                    RoutineCard(
-                        routine = routine,
-                        onToggle = { onToggle(routine.id, it) },
-                        onClick = { onEdit(routine.id) },
-                        onLongClick = { routineToDelete = routine.id },
-                        onDuplicate = { onDuplicate(routine.id) },
-                    )
-                    Spacer(Modifier.height(8.dp))
+                    item {
+                        key(routine.id) {
+                            RoutineCard(
+                                routine = routine,
+                                onToggle = { onToggle(routine.id, it) },
+                                onClick = { onEdit(routine.id) },
+                                onLongClick = { routineToDelete = routine.id },
+                                onDuplicate = { onDuplicate(routine.id) },
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -501,20 +503,10 @@ private fun RoutineCard(
 ) {
     val haptic = LocalHapticFeedback.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.98f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium,
-        ),
-        label = "card_press_scale",
-    )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .scale(scale)
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = ripple(),
@@ -527,7 +519,7 @@ private fun RoutineCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceBright,
         ),
-        shape = MaterialTheme.shapes.large,
+        shape = androidx.compose.ui.graphics.RectangleShape,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -536,14 +528,14 @@ private fun RoutineCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     routine.name,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     buildRoutineSummary(routine),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,

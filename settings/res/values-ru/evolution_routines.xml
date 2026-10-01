@@ -292,4 +292,5 @@
         <item quantity="many">%1$d дней назад</item>
         <item quantity="other">%1$d дня назад</item>
     </plurals>
+    <string name="routines_saved">Созданные сценарии</string>
 </resources>

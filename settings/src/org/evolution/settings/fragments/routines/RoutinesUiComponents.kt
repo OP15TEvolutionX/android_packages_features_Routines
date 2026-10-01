@@ -46,6 +46,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.android.settingslib.spa.framework.theme.SettingsShape
+import com.android.settingslib.spa.widget.preference.MainSwitchPreference
+import com.android.settingslib.spa.widget.preference.SwitchPreferenceModel
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -146,6 +148,7 @@ internal fun SecureSettingSwitch(
     summary: String,
     icon: ImageVector,
     defaultValue: Boolean,
+    mainSwitch: Boolean = false,
 ) {
     val context = LocalContext.current
     var checked by remember(settingKey) {
@@ -163,6 +166,30 @@ internal fun SecureSettingSwitch(
             observer,
         )
         onDispose { context.contentResolver.unregisterContentObserver(observer) }
+    }
+    val setChecked: (Boolean) -> Unit = { enabled ->
+        Settings.Secure.putIntForUser(
+            context.contentResolver,
+            settingKey,
+            if (enabled) 1 else 0,
+            UserHandle.USER_CURRENT,
+        )
+        checked = enabled
+    }
+    if (mainSwitch) {
+        val currentChecked = checked
+        MainSwitchPreference(object : SwitchPreferenceModel {
+            override val title = title
+            override val checked = { currentChecked }
+            override val onCheckedChange = setChecked
+        })
+        Text(
+            text = summary,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+        return
     }
     ListItem(
         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceBright),
