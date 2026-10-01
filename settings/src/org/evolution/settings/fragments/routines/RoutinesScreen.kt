@@ -23,7 +23,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.UserHandle
 import android.provider.Settings
-import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -552,10 +551,7 @@ private fun RoutineCard(
                 routine.lastTriggeredAt?.let { ts ->
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        DateUtils.getRelativeTimeSpanString(
-                            ts, System.currentTimeMillis(),
-                            DateUtils.MINUTE_IN_MILLIS,
-                        ).toString(),
+                        describeLastRun(ts),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline,
                     )
@@ -595,25 +591,25 @@ private fun buildRoutineSummary(routine: Routine): String {
 @Composable
 internal fun describeTrigger(trigger: Trigger): String = when (trigger) {
     is Trigger.TimeOfDay -> describeTimeOfDay(trigger)
-    is Trigger.Interval -> "Every ${trigger.intervalMinutes}m"
-    is Trigger.ChargingState -> if (trigger.charging) "Charging" else "Unplugged"
-    is Trigger.BatteryLevel -> "Battery ${trigger.direction.name.lowercase()} ${trigger.threshold}%"
+    is Trigger.Interval -> stringResource(R.string.routines_summary_every_m, trigger.intervalMinutes)
+    is Trigger.ChargingState -> if (trigger.charging) stringResource(R.string.routines_summary_charging) else stringResource(R.string.routines_summary_unplugged)
+    is Trigger.BatteryLevel -> stringResource(R.string.routines_summary_battery, stringResource(if (trigger.direction == Trigger.BatteryLevel.Direction.ABOVE) R.string.routines_above else R.string.routines_below), trigger.threshold)
     is Trigger.WifiState -> {
         val suffix = trigger.ssidPattern?.let { " (~$it)" }
             ?: trigger.ssid?.let { " ($it)" } ?: ""
-        if (trigger.connected) "WiFi on$suffix" else "WiFi off$suffix"
+        if (trigger.connected) stringResource(R.string.routines_summary_wifi_on, suffix) else stringResource(R.string.routines_summary_wifi_off, suffix)
     }
-    is Trigger.BluetoothState -> if (trigger.connected) "BT on" else "BT off"
-    is Trigger.ScreenState -> if (trigger.on) "Screen on" else "Screen off"
+    is Trigger.BluetoothState -> if (trigger.connected) stringResource(R.string.routines_summary_bt_on) else stringResource(R.string.routines_summary_bt_off)
+    is Trigger.ScreenState -> if (trigger.on) stringResource(R.string.routines_summary_screen_on) else stringResource(R.string.routines_summary_screen_off)
     is Trigger.FeatureState -> {
-        val name = KNOWN_FEATURES[trigger.feature] ?: trigger.feature
-        if (trigger.active) "$name on" else "$name off"
+        val name = featureLabel(trigger.feature)
+        if (trigger.active) stringResource(R.string.routines_summary_on, name) else stringResource(R.string.routines_summary_off, name)
     }
-    is Trigger.HeadphonesState -> if (trigger.connected) "Headphones in" else "Headphones out"
+    is Trigger.HeadphonesState -> if (trigger.connected) stringResource(R.string.routines_summary_headphones_in) else stringResource(R.string.routines_summary_headphones_out)
     is Trigger.RingerMode -> when (trigger.mode) {
-        AudioManager.RINGER_MODE_SILENT -> "Silent mode"
-        AudioManager.RINGER_MODE_VIBRATE -> "Vibrate mode"
-        else -> "Normal mode"
+        AudioManager.RINGER_MODE_SILENT -> stringResource(R.string.routines_summary_silent_mode)
+        AudioManager.RINGER_MODE_VIBRATE -> stringResource(R.string.routines_summary_vibrate_mode)
+        else -> stringResource(R.string.routines_summary_normal_mode)
     }
     is Trigger.IncomingCall -> if (trigger.phoneNumbers.isEmpty()) {
         stringResource(R.string.routines_incoming_call_any_summary)
@@ -624,30 +620,30 @@ internal fun describeTrigger(trigger: Trigger): String = when (trigger) {
         )
     }
     is Trigger.SmsMessage -> stringResource(R.string.routines_sms_message_summary, trigger.text)
-    is Trigger.AppLaunch -> "Open ${trigger.packageName.substringAfterLast('.')}"
-    is Trigger.AppClose -> "Close ${trigger.packageName.substringAfterLast('.')}"
+    is Trigger.AppLaunch -> stringResource(R.string.routines_summary_open, trigger.packageName.substringAfterLast('.'))
+    is Trigger.AppClose -> stringResource(R.string.routines_summary_close, trigger.packageName.substringAfterLast('.'))
     is Trigger.SensorPrivacyState -> {
-        val sensor = if (trigger.sensor == SENSOR_CAMERA) "Camera" else "Mic"
-        if (trigger.blocked) "$sensor blocked" else "$sensor unblocked"
+        val sensor = if (trigger.sensor == SENSOR_CAMERA) stringResource(R.string.routines_summary_camera) else stringResource(R.string.routines_summary_mic)
+        if (trigger.blocked) stringResource(R.string.routines_summary_blocked, sensor) else stringResource(R.string.routines_summary_unblocked, sensor)
     }
     is Trigger.Location -> {
-        val action = if (trigger.entering) "Enter" else "Leave"
+        val action = if (trigger.entering) stringResource(R.string.routines_summary_enter) else stringResource(R.string.routines_summary_leave)
         "$action (${String.format("%.4f", trigger.latitude)}, ${String.format("%.4f", trigger.longitude)})"
     }
-    is Trigger.CaptivePortal -> trigger.ssid?.let { "Captive portal ($it)" } ?: "Captive portal"
+    is Trigger.CaptivePortal -> trigger.ssid?.let { stringResource(R.string.routines_summary_captive_portal, it) } ?: stringResource(R.string.routines_summary_captive_portal_29)
     is Trigger.NfcTag -> {
         val name = trigger.tagName?.takeIf { it.isNotBlank() } ?: trigger.tagId
-        "Tap NFC \"$name\""
+        stringResource(R.string.routines_summary_tap_nfc, name)
     }
 }
 
 @Composable
 internal fun describeAction(action: Action): String = when (action) {
     is Action.SetFeature -> {
-        val name = KNOWN_FEATURES[action.feature] ?: action.feature
-        if (action.enabled) "Enable $name" else "Disable $name"
+        val name = featureLabel(action.feature)
+        if (action.enabled) stringResource(R.string.routines_summary_enable, name) else stringResource(R.string.routines_summary_disable, name)
     }
-    is Action.ToggleFeature -> "Toggle ${KNOWN_FEATURES[action.feature] ?: action.feature}"
+    is Action.ToggleFeature -> stringResource(R.string.routines_summary_toggle, featureLabel(action.feature))
     is Action.SetVolume -> {
         val audioManager = LocalContext.current.getSystemService(AudioManager::class.java)
         stringResource(
@@ -656,34 +652,34 @@ internal fun describeAction(action: Action): String = when (action) {
             appliedVolumePercent(audioManager, action.streamType, action.level),
         )
     }
-    is Action.SetBrightness -> "Brightness ${action.level * 100 / 255}%"
+    is Action.SetBrightness -> stringResource(R.string.routines_summary_brightness, action.level * 100 / 255)
     is Action.SetRingerMode -> when (action.mode) {
-        AudioManager.RINGER_MODE_SILENT -> "Silent"
-        AudioManager.RINGER_MODE_VIBRATE -> "Vibrate"
-        else -> "Normal ringer"
+        AudioManager.RINGER_MODE_SILENT -> stringResource(R.string.routines_summary_silent)
+        AudioManager.RINGER_MODE_VIBRATE -> stringResource(R.string.routines_summary_vibrate)
+        else -> stringResource(R.string.routines_summary_normal_ringer)
     }
     is Action.LaunchApp -> {
         val appName = action.packageName.substringAfterLast('.')
         when (action.launchMode) {
-            Action.LaunchApp.LaunchMode.FREEFORM -> "Open $appName (Freeform)"
-            Action.LaunchApp.LaunchMode.BUBBLE -> "Open $appName (Bubble)"
-            else -> "Open $appName"
+            Action.LaunchApp.LaunchMode.FREEFORM -> stringResource(R.string.routines_summary_open_freeform, appName)
+            Action.LaunchApp.LaunchMode.BUBBLE -> stringResource(R.string.routines_summary_open_bubble, appName)
+            else -> stringResource(R.string.routines_summary_open_40, appName)
         }
     }
-    is Action.SendBroadcast -> "Broadcast"
-    is Action.ShowNotification -> "Notify: ${action.title}"
-    is Action.Delay -> "Wait ${action.durationMs / 1000}s"
-    is Action.SetSetting -> "Set ${action.key}"
+    is Action.SendBroadcast -> stringResource(R.string.routines_summary_broadcast)
+    is Action.ShowNotification -> stringResource(R.string.routines_summary_notify, action.title)
+    is Action.Delay -> stringResource(R.string.routines_summary_wait_s, action.durationMs / 1000)
+    is Action.SetSetting -> stringResource(R.string.routines_summary_set, action.key)
     is Action.SetSensorPrivacy -> {
-        val sensor = if (action.sensor == SENSOR_CAMERA) "Camera" else "Mic"
-        if (action.blocked) "Block $sensor" else "Unblock $sensor"
+        val sensor = if (action.sensor == SENSOR_CAMERA) stringResource(R.string.routines_summary_camera) else stringResource(R.string.routines_summary_mic)
+        if (action.blocked) stringResource(R.string.routines_summary_block, sensor) else stringResource(R.string.routines_summary_unblock, sensor)
     }
     is Action.PlaySound -> if (action.uri != null) {
-        "Play custom sound"
+        stringResource(R.string.routines_summary_play_custom_sound)
     } else when (action.soundType) {
-        SOUND_TYPE_ALARM -> "Play alarm"
-        SOUND_TYPE_RINGTONE -> "Play ringtone"
-        else -> "Play notification"
+        SOUND_TYPE_ALARM -> stringResource(R.string.routines_summary_play_alarm)
+        SOUND_TYPE_RINGTONE -> stringResource(R.string.routines_summary_play_ringtone)
+        else -> stringResource(R.string.routines_summary_play_notification)
     }
     is Action.SendLocationSms -> action.phoneNumber?.takeIf { it.isNotBlank() }?.let {
         stringResource(R.string.routines_send_location_sms_number_summary, it)
@@ -708,26 +704,29 @@ private val WEEKDAYS = setOf(
 )
 private val WEEKENDS = setOf(Calendar.SATURDAY, Calendar.SUNDAY)
 
-private val DAY_SHORT_NAMES = mapOf(
-    Calendar.SUNDAY to "Sun", Calendar.MONDAY to "Mon",
-    Calendar.TUESDAY to "Tue", Calendar.WEDNESDAY to "Wed",
-    Calendar.THURSDAY to "Thu", Calendar.FRIDAY to "Fri",
-    Calendar.SATURDAY to "Sat",
-)
-
+@Composable
 private fun describeTimeOfDay(trigger: Trigger.TimeOfDay): String {
+    val dayShortNames = mapOf(
+        Calendar.SUNDAY to stringResource(R.string.routines_summary_sun),
+        Calendar.MONDAY to stringResource(R.string.routines_summary_mon),
+        Calendar.TUESDAY to stringResource(R.string.routines_summary_tue),
+        Calendar.WEDNESDAY to stringResource(R.string.routines_summary_wed),
+        Calendar.THURSDAY to stringResource(R.string.routines_summary_thu),
+        Calendar.FRIDAY to stringResource(R.string.routines_summary_fri),
+        Calendar.SATURDAY to stringResource(R.string.routines_summary_sat),
+    )
     val time = "%02d:%02d".format(trigger.hour, trigger.minute)
     val days = trigger.daysOfWeek
     return when {
-        days.size >= 7 || days == Trigger.ALL_DAYS -> "Daily at $time"
-        days == WEEKDAYS -> "Weekdays at $time"
-        days == WEEKENDS -> "Weekends at $time"
+        days.size >= 7 || days == Trigger.ALL_DAYS -> stringResource(R.string.routines_summary_daily_at, time)
+        days == WEEKDAYS -> stringResource(R.string.routines_summary_weekdays_at, time)
+        days == WEEKENDS -> stringResource(R.string.routines_summary_weekends_at, time)
         else -> {
             val dayStr = listOf(
                 Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY,
                 Calendar.THURSDAY, Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY,
-            ).filter { it in days }.mapNotNull { DAY_SHORT_NAMES[it] }.joinToString(", ")
-            "$dayStr at $time"
+            ).filter { it in days }.mapNotNull { dayShortNames[it] }.joinToString(", ")
+            stringResource(R.string.routines_summary_at, dayStr, time)
         }
     }
 }

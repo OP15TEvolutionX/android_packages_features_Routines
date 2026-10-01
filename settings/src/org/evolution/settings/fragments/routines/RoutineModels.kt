@@ -16,6 +16,8 @@
 
 package org.evolution.settings.fragments.routines
 
+import com.android.settings.R
+
 import android.media.AudioManager
 import java.util.Calendar
 import java.util.UUID
@@ -273,20 +275,23 @@ internal fun appliedVolumePercent(audioManager: AudioManager?, streamType: Int, 
 }
 
 val KNOWN_FEATURES = linkedMapOf(
-    "wifi" to "WiFi",
-    "bluetooth" to "Bluetooth",
-    "mobile_data" to "Mobile Data",
-    "airplane_mode" to "Airplane Mode",
-    "do_not_disturb" to "Do Not Disturb",
-    "dark_mode" to "Dark Mode",
-    "auto_rotate" to "Auto Rotate",
-    "battery_saver" to "Battery Saver",
-    "data_saver" to "Data Saver",
-    "hotspot" to "Hotspot",
-    "location" to "Location",
-    "nfc" to "NFC",
-    "flashlight" to "Flashlight",
-    "reading_mode" to "Reading Mode",
-    "ambient_display" to "Ambient Display",
-    "heads_up" to "Heads Up",
+    "wifi" to R.string.routines_feature_wifi,
+    "bluetooth" to R.string.routines_feature_bluetooth,
+    "mobile_data" to R.string.routines_feature_mobile_data,
+    "airplane_mode" to R.string.routines_feature_airplane_mode,
+    "do_not_disturb" to R.string.routines_feature_do_not_disturb,
+    "dark_mode" to R.string.routines_feature_dark_mode,
+    "auto_rotate" to R.string.routines_feature_auto_rotate,
+    "battery_saver" to R.string.routines_feature_battery_saver,
+    "data_saver" to R.string.routines_feature_data_saver,
+    "hotspot" to R.string.routines_feature_hotspot,
+    "location" to R.string.routines_feature_location,
+    "nfc" to R.string.routines_feature_nfc,
+    "flashlight" to R.string.routines_feature_flashlight,
+    "reading_mode" to R.string.routines_feature_reading_mode,
+    "ambient_display" to R.string.routines_feature_ambient_display,
+    "heads_up" to R.string.routines_feature_heads_up,
 )
+
+@androidx.compose.runtime.Composable
+internal fun featureLabel(key: String): String = KNOWN_FEATURES[key]?.let { androidx.compose.ui.res.stringResource(it) } ?: key

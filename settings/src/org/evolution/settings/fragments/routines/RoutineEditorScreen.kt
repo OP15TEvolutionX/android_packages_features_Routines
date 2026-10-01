@@ -1039,7 +1039,7 @@ private fun TriggerConfigDialog(
 
                         if (nfcAdapter == null) {
                             Text(
-                                text = "NFC is not supported on this device.",
+                                text = stringResource(R.string.routines_nfc_unsupported),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error,
                             )
@@ -1231,9 +1231,9 @@ private fun ActionConfigDialog(
                     title = { Text(stringResource(R.string.routines_launch_app)) },
                     text = {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text("Selected app: $pkgName")
+                            Text(stringResource(R.string.routines_summary_selected_app, pkgName))
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text("Choose launch mode:")
+                            Text(stringResource(R.string.routines_summary_choose_launch_mode))
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -1246,7 +1246,7 @@ private fun ActionConfigDialog(
                                     FilterChip(
                                         selected = launchMode == Action.LaunchApp.LaunchMode.FULLSCREEN,
                                         onClick = { launchMode = Action.LaunchApp.LaunchMode.FULLSCREEN },
-                                        label = { Text("Fullscreen") },
+                                        label = { Text(stringResource(R.string.routines_summary_fullscreen)) },
                                     )
                                 }
                                 Row(
@@ -1256,12 +1256,12 @@ private fun ActionConfigDialog(
                                     FilterChip(
                                         selected = launchMode == Action.LaunchApp.LaunchMode.BUBBLE,
                                         onClick = { launchMode = Action.LaunchApp.LaunchMode.BUBBLE },
-                                        label = { Text("Bubble") },
+                                        label = { Text(stringResource(R.string.routines_launch_bubble)) },
                                     )
                                     FilterChip(
                                         selected = launchMode == Action.LaunchApp.LaunchMode.FREEFORM,
                                         onClick = { launchMode = Action.LaunchApp.LaunchMode.FREEFORM },
-                                        label = { Text("Freeform") },
+                                        label = { Text(stringResource(R.string.routines_launch_freeform)) },
                                     )
                                 }
                             }
@@ -1594,7 +1594,7 @@ private fun ActionConfigDialog(
                         OutlinedTextField(
                             value = headersText,
                             onValueChange = { headersText = it },
-                            label = { Text("Headers (Key: Value)") },
+                            label = { Text(stringResource(R.string.routines_http_headers)) },
                             modifier = Modifier.fillMaxWidth(),
                             minLines = 2,
                             maxLines = 4,
@@ -1771,13 +1771,13 @@ private fun ConditionConfigDialog(
                 title = { Text(stringResource(R.string.routines_battery_range)) },
                 text = {
                     Column {
-                        Text("Min: ${min.toInt()}%")
+                        Text(stringResource(R.string.routines_battery_min, min.toInt()))
                         Slider(
                             value = min,
                             onValueChange = { min = it.coerceAtMost(max) },
                             valueRange = 0f..100f,
                         )
-                        Text("Max: ${max.toInt()}%")
+                        Text(stringResource(R.string.routines_battery_max, max.toInt()))
                         Slider(
                             value = max,
                             onValueChange = { max = it.coerceAtLeast(min) },
@@ -2024,7 +2024,7 @@ private fun FeatureSelectDialog(
                 if (showToggle && selectedFeature != null) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            KNOWN_FEATURES[selectedFeature] ?: selectedFeature!!,
+                            featureLabel(selectedFeature!!),
                             modifier = Modifier.weight(1f),
                         )
                         RoutineSwitch(checked = enabled, onCheckedChange = { enabled = it })
@@ -2032,9 +2032,9 @@ private fun FeatureSelectDialog(
                     Spacer(Modifier.height(8.dp))
                 }
                 LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
-                    items(KNOWN_FEATURES.entries.toList()) { (key, label) ->
+                    items(KNOWN_FEATURES.entries.toList()) { (key, labelRes) ->
                         ListItem(
-                            headlineContent = { Text(label) },
+                            headlineContent = { Text(stringResource(labelRes)) },
                             modifier = Modifier.clickable { selectedFeature = key },
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             trailingContent = {
@@ -2165,13 +2165,13 @@ private fun DayOfWeekSelector(
     onDaysChanged: (Set<Int>) -> Unit,
 ) {
     val dayLabels = listOf(
-        Calendar.SUNDAY to "Sun",
-        Calendar.MONDAY to "Mon",
-        Calendar.TUESDAY to "Tue",
-        Calendar.WEDNESDAY to "Wed",
-        Calendar.THURSDAY to "Thu",
-        Calendar.FRIDAY to "Fri",
-        Calendar.SATURDAY to "Sat",
+        Calendar.SUNDAY to stringResource(R.string.routines_summary_sun),
+        Calendar.MONDAY to stringResource(R.string.routines_summary_mon),
+        Calendar.TUESDAY to stringResource(R.string.routines_summary_tue),
+        Calendar.WEDNESDAY to stringResource(R.string.routines_summary_wed),
+        Calendar.THURSDAY to stringResource(R.string.routines_summary_thu),
+        Calendar.FRIDAY to stringResource(R.string.routines_summary_fri),
+        Calendar.SATURDAY to stringResource(R.string.routines_summary_sat),
     )
     FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         dayLabels.forEach { (day, label) ->
@@ -2191,41 +2191,42 @@ private fun DayOfWeekSelector(
     }
 }
 
+@Composable
 private fun describeCondition(condition: Condition): String = when (condition) {
     is Condition.TimeRange ->
-        "Between %02d:%02d - %02d:%02d".format(
+        stringResource(R.string.routines_time_range_summary,
             condition.startHour, condition.startMinute,
             condition.endHour, condition.endMinute,
         )
     is Condition.DayOfWeek -> {
         val dayNames = mapOf(
-            Calendar.SUNDAY to "Sun", Calendar.MONDAY to "Mon",
-            Calendar.TUESDAY to "Tue", Calendar.WEDNESDAY to "Wed",
-            Calendar.THURSDAY to "Thu", Calendar.FRIDAY to "Fri",
-            Calendar.SATURDAY to "Sat",
+            Calendar.SUNDAY to stringResource(R.string.routines_summary_sun), Calendar.MONDAY to stringResource(R.string.routines_summary_mon),
+            Calendar.TUESDAY to stringResource(R.string.routines_summary_tue), Calendar.WEDNESDAY to stringResource(R.string.routines_summary_wed),
+            Calendar.THURSDAY to stringResource(R.string.routines_summary_thu), Calendar.FRIDAY to stringResource(R.string.routines_summary_fri),
+            Calendar.SATURDAY to stringResource(R.string.routines_summary_sat),
         )
         condition.days.sorted().mapNotNull { dayNames[it] }.joinToString(", ")
     }
-    is Condition.BatteryRange -> "Battery ${condition.min}%-${condition.max}%"
-    is Condition.ChargingState -> if (condition.charging) "While charging" else "While not charging"
+    is Condition.BatteryRange -> stringResource(R.string.routines_summary_battery_62, condition.min, condition.max)
+    is Condition.ChargingState -> if (condition.charging) stringResource(R.string.routines_summary_while_charging) else stringResource(R.string.routines_summary_while_not_charging)
     is Condition.WifiConnected -> {
-        condition.ssidPattern?.let { "WiFi: ~$it" }
-            ?: condition.ssid?.let { "WiFi: $it" }
-            ?: "WiFi connected"
+        condition.ssidPattern?.let { stringResource(R.string.routines_summary_wifi, it) }
+            ?: condition.ssid?.let { stringResource(R.string.routines_summary_wifi_66, it) }
+            ?: stringResource(R.string.routines_summary_wifi_connected)
     }
     is Condition.BluetoothConnected ->
-        condition.deviceAddress?.let { "BT: $it" } ?: "Bluetooth connected"
-    is Condition.ScreenOn -> if (condition.on) "Screen on" else "Screen off"
+        condition.deviceAddress?.let { stringResource(R.string.routines_summary_bt, it) } ?: stringResource(R.string.routines_summary_bluetooth_connected)
+    is Condition.ScreenOn -> if (condition.on) stringResource(R.string.routines_summary_screen_on) else stringResource(R.string.routines_summary_screen_off)
     is Condition.FeatureActive -> {
-        val name = KNOWN_FEATURES[condition.feature] ?: condition.feature
-        if (condition.active) "$name active" else "$name inactive"
+        val name = featureLabel(condition.feature)
+        if (condition.active) stringResource(R.string.routines_summary_active, name) else stringResource(R.string.routines_summary_inactive, name)
     }
     is Condition.SensorBlocked -> {
-        val sensor = if (condition.sensor == SENSOR_CAMERA) "Camera" else "Mic"
-        if (condition.blocked) "$sensor blocked" else "$sensor unblocked"
+        val sensor = if (condition.sensor == SENSOR_CAMERA) stringResource(R.string.routines_summary_camera) else stringResource(R.string.routines_summary_mic)
+        if (condition.blocked) stringResource(R.string.routines_summary_blocked, sensor) else stringResource(R.string.routines_summary_unblocked, sensor)
     }
     is Condition.LocationNear ->
-        "Near (${String.format("%.4f", condition.latitude)}, ${String.format("%.4f", condition.longitude)}) ${condition.radiusMeters.toInt()}m"
+        stringResource(R.string.routines_location_near_summary, String.format("%.4f", condition.latitude), String.format("%.4f", condition.longitude), condition.radiusMeters.toInt())
     is Condition.IpAddress -> "IP: ${condition.cidr}"
 }
 
