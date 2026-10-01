@@ -56,6 +56,12 @@ class RoutinesActivity : CollapsingToolbarBaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    fun updateScreenTitle(screenTitle: String) {
+        title = screenTitle
+        // XML preference pages expand this in BasePreferencesFragment.onStart().
+        appBarLayout?.setExpanded(screenTitle == getString(R.string.routines), false)
+    }
+
     override fun onNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true

@@ -57,7 +57,9 @@ internal fun RoutinesScaffold(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val activity = LocalContext.current as? RoutinesActivity
-    androidx.compose.runtime.SideEffect { activity?.title = title }
+    androidx.compose.runtime.LaunchedEffect(activity, title) {
+        activity?.updateScreenTitle(title)
+    }
     Scaffold(
         modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection()),
         containerColor = MaterialTheme.colorScheme.background,
@@ -106,7 +108,7 @@ internal fun PreferenceGroup(
                 text = it,
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 12.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
             )
         }
         Card(

@@ -305,7 +305,6 @@ private fun RoutinesListContent(
                     summary = stringResource(R.string.routines_enabled_summary),
                     icon = Icons.Default.AutoMode,
                     defaultValue = false,
-                    mainSwitch = true,
                 )
             }
         }
@@ -368,28 +367,26 @@ private fun RoutinesListContent(
         }
 
         if (routines.isNotEmpty()) {
-            PreferenceGroup(title = stringResource(R.string.routines_saved)) {
+            Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
                 routines.forEach { routine ->
-                    item {
-                        key(routine.id) {
-                            RoutineCard(
-                                routine = routine,
-                                onToggle = { onToggle(routine.id, it) },
-                                onClick = { onEdit(routine.id) },
-                                onLongClick = { routineToDelete = routine.id },
-                                onDuplicate = { onDuplicate(routine.id) },
-                            )
-                        }
+                    key(routine.id) {
+                        RoutineCard(
+                            routine = routine,
+                            onToggle = { onToggle(routine.id, it) },
+                            onClick = { onEdit(routine.id) },
+                            onLongClick = { routineToDelete = routine.id },
+                            onDuplicate = { onDuplicate(routine.id) },
+                        )
                     }
                 }
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(16.dp))
 
         FilledTonalButton(
             onClick = onCreate,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(48.dp),
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(Modifier.width(8.dp))
@@ -519,7 +516,7 @@ private fun RoutineCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceBright,
         ),
-        shape = androidx.compose.ui.graphics.RectangleShape,
+        shape = com.android.settingslib.spa.framework.theme.SettingsShape.CornerExtraLarge1,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
