@@ -10,6 +10,12 @@ import android.os.Looper
 import android.os.UserHandle
 import android.provider.Settings
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,8 +29,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -136,13 +140,54 @@ internal fun ClickablePreference(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    ListItem(
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        headlineContent = { Text(title) },
-        supportingContent = { Text(summary) },
-        leadingContent = { Icon(icon, contentDescription = null) },
+    RoutinesPreferenceRow(
+        title = title,
+        summary = summary,
+        icon = icon,
         modifier = Modifier.clickable(enabled = enabled, onClick = onClick),
     )
+}
+
+@Composable
+private fun RoutinesPreferenceRow(
+    title: String,
+    summary: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    trailingContent: (@Composable () -> Unit)? = null,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceBright)
+            .heightIn(min = 72.dp)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                summary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        trailingContent?.let {
+            Spacer(Modifier.width(16.dp))
+            it()
+        }
+    }
 }
 
 @Composable
@@ -195,11 +240,10 @@ internal fun SecureSettingSwitch(
         )
         return
     }
-    ListItem(
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        headlineContent = { Text(title) },
-        supportingContent = { Text(summary) },
-        leadingContent = { Icon(icon, contentDescription = null) },
+    RoutinesPreferenceRow(
+        title = title,
+        summary = summary,
+        icon = icon,
         trailingContent = {
             RoutineSwitch(
                 checked = checked,
