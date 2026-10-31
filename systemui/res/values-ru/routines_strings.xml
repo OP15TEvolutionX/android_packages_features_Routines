@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="routines_notification_channel_name">Сценарии</string>
+    <string name="routines_toast_executing">Выполняется сценарий: <xliff:g id="name">%1$s</xliff:g></string>
+    <string name="routines_sms_location_reply">Текущее местоположение: <xliff:g id="location">%1$s</xliff:g></string>
+    <string name="routines_sms_location_unavailable">Текущее местоположение недоступно</string>
+    <string name="status_bar_routines">Сценарии активны</string>
+    <string name="quick_settings_routines_label">Сценарии</string>
+    <string name="quick_settings_routines_off">Выключено</string>
+    <string name="quick_settings_routines_dialog_title">Запустить сценарий</string>
+    <string name="quick_settings_routines_empty">Создайте сценарии в настройках Evolution.</string>
+    <string name="quick_settings_routines_action_count">Действий: %1$d</string>
+    <plurals name="quick_settings_routines_count">
+        <item quantity="one">%d сценарий</item>
+        <item quantity="few">%d сценария</item>
+        <item quantity="many">%d сценариев</item>
+        <item quantity="other">%d сценария</item>
+    </plurals>
+</resources>
