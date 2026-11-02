@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.android.settingslib.spa.framework.theme.SettingsShape
 import com.android.settingslib.spa.widget.preference.MainSwitchPreference
 import com.android.settingslib.spa.widget.preference.SwitchPreferenceModel
+import org.evolution.settings.extrafeatures.ui.ExtraFeaturesMainSwitch
 import org.evolution.settings.extrafeatures.ui.ExtraFeaturesSwitch
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
@@ -216,11 +217,7 @@ internal fun SecureSettingSwitch(
     }
     if (mainSwitch) {
         val currentChecked = checked
-        MainSwitchPreference(object : SwitchPreferenceModel {
-            override val title = title
-            override val checked = { currentChecked }
-            override val onCheckedChange = setChecked
-        })
+        ExtraFeaturesMainSwitch(title, currentChecked, setChecked)
         Text(
             text = summary,
             style = MaterialTheme.typography.bodyMedium,
