@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.android.settingslib.spa.framework.theme.SettingsShape
 import com.android.settingslib.spa.widget.preference.MainSwitchPreference
 import com.android.settingslib.spa.widget.preference.SwitchPreferenceModel
+import org.evolution.settings.extrafeatures.ui.ExtraFeaturesSwitch
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -81,19 +82,7 @@ internal fun RoutineSwitch(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Switch(
-        checked = checked,
-        onCheckedChange = onCheckedChange,
-        modifier = modifier,
-        enabled = enabled,
-        thumbContent = {
-            Icon(
-                if (checked) Icons.Default.Check else Icons.Default.Close,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-            )
-        },
-    )
+    ExtraFeaturesSwitch(checked, onCheckedChange, modifier, enabled)
 }
 
 internal class PreferenceGroupScope {
